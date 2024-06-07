@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SEO</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        width: 80%;
+        margin: 40px auto;
+        text-align: center;
+      }
+      h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+      }
+      form {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+      }
+      textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        font-size: 16px;
+        resize: vertical;
+        border-radius: 15px;
+      }
+      input[type="submit"] {
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      input[type="submit"]:hover {
+        background-color: #3e8e41;
+      }
+      #generate-outline-result, #categorize-keywords-result, #generate-content-result, #quality-assurance-result {
+        font-size: 16px;
+        font-family: monospace;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 80%;
+        margin: 20px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Content Generation API</h1>
+
+    <h2>Generate Outline</h2>
+    <form id="generate-outline-form">
+      <label for="outline-prompt">Outline Prompt:</label>
+      <textarea id="outline-prompt" name="outline_prompt"></textarea><br />
+
+      <label for="target-keyword">Target Keyword:</label>
+      <textarea id="target-keyword" name="target_keyword"></textarea><br />
+
+      <input type="submit" value="Generate Outline" />
+    </form>
+    <div id="generate-outline-result"></div>
+
+    <h2>Categorize Keywords</h2>
+    <form id="categorize-keywords-form">
+      <label for="outline">Outline:</label>
+      <textarea id="outline" name="outline"></textarea><br />
+
+      <label for="keywords">Keywords:</label>
+      <textarea id="keywords" name="keywords"></textarea><br />
+
+      <label for="categorize-prompt">Categorize Prompt:</label>
+      <textarea id="categorize-prompt" name="categorize_prompt"></textarea
+      ><br />
+
+      <input type="submit" value="Categorize Keywords" />
+    </form>
+    <div id="categorize-keywords-result"></div>
+
+    <h2>Generate Content</h2>
+    <form id="generate-content-form">
+      
+
+      <label for="categorized-keywords">Categorized Keywords:</label>
+      <textarea id="categorized-keywords" name="categorized_keywords"></textarea
+      ><br />
+
+      <label for="content-prompt">Content Prompt:</label>
+      <textarea id="content-prompt" name="content_prompt"></textarea><br />
+
+      <input type="submit" value="Generate Content" />
+    </form>
+    <div id="generate-content-result"></div>
+
+    <h2>Quality Assurance</h2>
+    <form id="quality-assurance-form">
+     
+
+      <label for="content">Content:</label>
+      <textarea id="content" name="content"></textarea><br />
+
+      <label for="keywords">Keywords:</label>
+      <textarea id="keywords" name="keywords"></textarea><br />
+
+      <label for="qa-prompt">QA Prompt:</label>
+      <textarea id="qa-prompt" name="qa_prompt"></textarea><br />
+
+      <input type="submit" value="Run Quality Assurance" />
+    </form>
+    <div id="quality-assurance-result"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const generateOutlineForm = document.getElementById(
+          "generate-outline-form"
+        );
+        generateOutlineForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const formData = {
+            outline_prompt: document.getElementById("outline-prompt").value,
+            target_keyword: document.getElementById("target-keyword").value,
+          };
+          fetch("/generate-outline", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("generate-outline-result").innerHTML =
+                JSON.stringify(data.outline, null, 2);
+            })
+            .catch((error) => {
+              document.getElementById("generate-outline-result").innerHTML =
+                "<p>Error: " + error.message + "</p>";
+            });
+        });
+
+        const categorizeKeywordsForm = document.getElementById(
+          "categorize-keywords-form"
+        );
+        categorizeKeywordsForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const formData = {
+            outline: document.getElementById("outline").value,
+            keywords: document.getElementById("keywords").value,
+            categorize_prompt:
+              document.getElementById("categorize-prompt").value,
+          };
+          fetch("/categorize-keywords", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("categorize-keywords-result").innerHTML =
+              JSON.stringify(data.categorized_keywords, null, 2);
+            })
+            .catch((error) => {
+              document.getElementById("categorize-keywords-result").innerHTML =
+                "<p>Error: " + error.message + "</p>";
+            });
+        });
+
+        const generateContentForm = document.getElementById(
+          "generate-content-form"
+        );
+        generateContentForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const formData = {
+            content_prompt: document.getElementById("content-prompt").value,
+            categorized_keywords: document.getElementById(
+              "categorized-keywords"
+            ).value,
+          };
+          fetch("/generate-content", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("generate-content-result").innerHTML =
+              JSON.stringify(data.content, null, 2);
+            })
+            .catch((error) => {
+              document.getElementById("generate-content-result").innerHTML =
+                "<p>Error: " + error.message + "</p>";
+            });
+        });
+
+        const qualityAssuranceForm = document.getElementById(
+          "quality-assurance-form"
+        );
+        qualityAssuranceForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const formData = {
+            qa_prompt: document.getElementById("qa-prompt").value,
+            content: document.getElementById("content").value,
+            keywords: document.getElementById("keywords").value,
+          };
+          fetch("/quality-assurance", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("quality-assurance-result").innerHTML =
+              JSON.stringify(data.qa_result, null, 2);
+            })
+            .catch((error) => {
+              document.getElementById("quality-assurance-result").innerHTML =
+                "<p>Error: " + error.message + "</p>";
+            });
+        });
+      });
+    </script>
+  </body>
+</html>
